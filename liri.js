@@ -20,26 +20,39 @@ var params = {
 	count: 10,
 };
 var userChoice = process.argv[2];
-console.log(userChoice)
 var entry = [];
 process.argv.forEach(function(val,index) {
 	entry.push(val);
 });
-
+var song = "";
 
 if(userChoice === 'my-tweets') {
 	callTwitter();
 } else if (userChoice === 'spotify-this-song') {
-	var song = entry.splice(3).join(' ')
+	song = entry.splice(3).join(' ')
 	callSpotify();
 } else if (userChoice === 'movie-this') {
 	movieName = entry.splice(3).join('+');
 	callMovie();
 } else if (userChoice === 'do-what-it-says') {
-	console.log("random code")
-	//run code from random.txt
+	fs.readFile('random.txt','utf8',function(error,data) {
+		var randomChoice = data.split(',');
+		userChoice = randomChoice[0];
+		switch(userChoice) {
+			case 'my-tweets':
+				return callTwitter();
+			case 'spotify-this-song':
+				song = randomChoice[1];
+				return callSpotify();
+			case 'movie-this':
+				movieName = randomChoice[1];
+				return callMovie();
+			default:
+				return console.log("Oops! Looks like nothing was picked. Try again!")
+		}
+	})
 } else {
-	//default
+	console.log("Uh oh! looks like nothing was asked for, OR you asked for something I can't do! \n Please try again.")
 }
 
 
